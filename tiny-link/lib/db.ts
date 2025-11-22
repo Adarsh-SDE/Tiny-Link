@@ -8,7 +8,11 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-export async function query<T = any>(text: string, params?: any[]): Promise<{ rows: T[]; rowCount: number }> {
-  const res = await pool.query<T>(text, params);
-  return { rows: res.rows, rowCount: res.rowCount };
+export async function query<T = any>(
+  text: string,
+  params?: any[]
+): Promise<{ rows: T[]; rowCount: number }> {
+  // pool.query is effectively "any" because of our simple pg declaration
+  const res: any = await pool.query(text, params);
+  return { rows: res.rows as T[], rowCount: res.rowCount as number };
 }
